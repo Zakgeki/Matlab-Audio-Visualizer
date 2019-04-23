@@ -1,5 +1,5 @@
 %current fft
-function currentfft ( player, Y, FS )
+function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4, yP4, xP5, yP5 )
 
     sampleNumber = get( player, 'CurrentSample' );
     timerVal = get( player, 'TimerPeriod' );
@@ -29,64 +29,102 @@ function currentfft ( player, Y, FS )
         p(2:end -1) = p(2:end -1)*2;
     end
 
-    q = 1;
-    s = 1;
-    d = int16( length(p) );
+    p0 = sum(p((floor(1*n/FS)+1):(floor(60*n/FS)+1)));
+    p1 = sum(p((floor(60*n/FS)+1):(floor(250*n/FS)+1)));
+    p2 = sum(p((floor(250*n/FS)+1):(floor(2e3*n/FS)+1)));
+    p3 = sum(p((floor(2e3*n/FS)+1):(floor(8e3*n/FS)+1)));
+    p4 = sum(p((floor(8e3*n/FS)+1):(floor(20e3*n/FS)+1)));
 
-    pNew = zeros( [ d/10, 1 ] );
+    pArr = [ p0, p1, p2 , p3, p4 ];
+    % freqArray = (0:nUniquePts-1) * (FS / n); % create the frequency array
 
-    while q < d
-        pNew(s) = p(q);
-        q = q + 10;
-        s = s + 1;
+    x = [ cos(thetaArr(1)) / pArr(1), cos(thetaArr(2)) / pArr(2), cos(thetaArr(3)) / pArr(3), cos(thetaArr(4)) / pArr(4), cos(thetaArr(5)) / pArr(5) ];
+
+    y = [ sin(thetaArr(1)) / pArr(1), sin(thetaArr(2)) / pArr(2), sin(thetaArr(3)) / pArr(3), sin(thetaArr(4)) / pArr(4), sin(thetaArr(5)) / pArr(5) ];
+
+    % attenuating certain frequencies
+    x(1) = x(1) * 0.1;
+    x(2) = x(2);
+    x(3) = x(3);
+    x(4) = x(4) * 0.01;
+    x(5) = x(5) * 0.001;
+
+    y(1) = y(1) * 0.1;
+    y(2) = y(2);
+    y(3) = y(3);
+    y(4) = y(4) * 0.01;
+    y(5) = y(5) * 0.001;
+
+
+    % viewing range
+    high = 15e3;
+    low = -15e3;
+
+    % removing undefined regions
+    for a = 1:5
+        if y(a) == Inf || y(a) == -Inf
+            y(a) = 0;
+        end
+        if x(a) == Inf || x(a) == -Inf
+            x(a) = 0;
+        end
     end
 
-    % try gaussian or rect functions instead of bandpass?
 
-    p0 = abs( bandpass(pNew, [ 1 60 ], FS) );
-    p1 = abs( bandpass(pNew, [ 60 250 ], FS) );
-    p2 = abs( bandpass(pNew, [ 250 2e3 ], FS) );
-    p3 = abs( bandpass(pNew, [ 2e3 8e3 ], FS) );
-    p4 = abs( bandpass(pNew, [ 8e3 20e3 ], FS) );
+    % connecting the lines to each other to get a pentagon
+    xLine1 = [ x(2), x(1) ];
+    yLine1 = [ y(2), y(1) ];
 
-    % length( p0 )
-    % length( p1 )
-    % length( p2 )
-    % length( p3 )
-    % length( p4 )
+    xLine2 = [ x(3), x(2) ] ;
+    yLine2 = [ y(3), y(2) ] ;
 
-    pArr = [ p0, p1, p2, p3, p4 ];
-    %freqArray = (0:nUniquePts-1) * (FS / n); % create the frequency array
+    xLine3 = [ x(4), x(3) ] ;
+    yLine3 = [ y(4), y(3) ] ;
 
-    thetaArr = [ pi/2, 4.5*pi/5, 6.5*pi/5, 8.5*pi/5, 10.5*pi/5 ];
+    xLine4 = [ x(5), x(4) ];
+    yLine4 = [ y(5), y(4) ];
 
+    xLine5 = [ x(1), x(5) ];
+    yLine5 = [ y(1), y(5) ];
 
+    % radius of the power
+    xR1 = [ 0, x(1) ];
+    yR1 = [ 0, y(1) ];
 
-    x = cos(thetaArr) ./ pArr;
-    y = sin(thetaArr) ./ pArr;
+    xR2 = [ 0, x(2) ];
+    yR2 = [ 0, y(2) ];
 
-    % x1 = x(1);
-    % x2 = x(2) - x(1);
-    % x3 = x(3) - x(2);
-    % x4 = x(4) - x(3);
-    % x5 = x(5) - x(4);
-    %
-    % y1 = y(1);
-    % y2 = y(2) - y(1);
-    % y3 = y(3) - y(2);
-    % y4 = y(4) - y(3);
-    % y5 = y(5) - y(4);
-    %
-    % xArr = [ x1, x2, x3, x4, x5 ];
-    % yArr = [ y1, y2, y3, y4, y5 ];
-    %
-    % m = yArr ./ xArr;
-    %
-    % yFin = m.*x;
+    xR3 = [ 0, x(3) ];
+    yR3 = [ 0, y(3) ];
 
-    plot(x, y)
-    xlabel('Frequency (Hz)')
-    ylabel('Power (watts)')
-    title('Frequency vs. Power')
+    xR4 = [ 0, x(4) ];
+    yR4 = [ 0, y(4) ];
+
+    xR5 = [ 0, x(5) ];
+    yR5 = [ 0, y(5) ];
+
+    % plotting radius
+    plot(xR1, yR1, 'b')
+    hold on;
     grid on;
-    axis([-20e9 20e9 -20e9 20e9]);
+    plot(xR2, yR2, 'r')
+    plot(xR3, yR3, 'y')
+    plot(xR4, yR4, 'g')
+    plot(xR5, yR5, 'm')
+
+    % plotting visualizer pentagon
+    plot( xLine1, yLine1, 'k' )
+    plot( xLine2, yLine2, 'k' )
+    plot( xLine3, yLine3, 'k' )
+    plot( xLine4, yLine4, 'k' )
+    plot( xLine5, yLine5, 'k' )
+
+    %plotting stock pentagon
+    plot( xP1, yP1, 'c' )
+    plot( xP2, yP2, 'c' )
+    plot( xP3, yP3, 'c' )
+    plot( xP4, yP4, 'c' )
+    plot( xP5, yP5, 'c' )
+    hold off;
+    legend('0 Hz - 60 Hz', '60 Hz - 250 Hz', '250 - 2 kHz', '2 kHz - 8 kHz', '8 kHz -20 kHz' )
+    axis([ low high low high ]);
