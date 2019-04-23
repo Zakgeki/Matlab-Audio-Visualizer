@@ -29,6 +29,7 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
         p(2:end -1) = p(2:end -1)*2;
     end
 
+    % summing specific bands of frequen together
     p0 = sum(p((floor(1*n/FS)+1):(floor(60*n/FS)+1)));
     p1 = sum(p((floor(60*n/FS)+1):(floor(250*n/FS)+1)));
     p2 = sum(p((floor(250*n/FS)+1):(floor(2e3*n/FS)+1)));
@@ -42,23 +43,23 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
 
     y = [ sin(thetaArr(1)) / pArr(1), sin(thetaArr(2)) / pArr(2), sin(thetaArr(3)) / pArr(3), sin(thetaArr(4)) / pArr(4), sin(thetaArr(5)) / pArr(5) ];
 
-    % attenuating certain frequencies
+    % attenuating certain frequencies so it appears on the graph better
     x(1) = x(1) * 0.1;
-    x(2) = x(2);
+    x(2) = x(2) * 0.75;
     x(3) = x(3);
     x(4) = x(4) * 0.01;
     x(5) = x(5) * 0.001;
 
     y(1) = y(1) * 0.1;
-    y(2) = y(2);
+    y(2) = y(2) * 0.75;
     y(3) = y(3);
     y(4) = y(4) * 0.01;
     y(5) = y(5) * 0.001;
 
 
     % viewing range
-    high = 15e3;
-    low = -15e3;
+    high = 7.5e3;
+    low = -7.5e3;
 
     % removing undefined regions
     for a = 1:5
@@ -71,7 +72,7 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
     end
 
 
-    % connecting the lines to each other to get a pentagon
+    % edges of the pentagon
     xLine1 = [ x(2), x(1) ];
     yLine1 = [ y(2), y(1) ];
 
@@ -87,7 +88,7 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
     xLine5 = [ x(1), x(5) ];
     yLine5 = [ y(1), y(5) ];
 
-    % radius of the power
+    % radius of the pentagon
     xR1 = [ 0, x(1) ];
     yR1 = [ 0, y(1) ];
 
