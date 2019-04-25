@@ -30,11 +30,11 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
     end
 
     % summing specific bands of frequen together
-    p0 = sum(p((floor(1*n/FS)+1):(floor(60*n/FS)+1)));
-    p1 = sum(p((floor(60*n/FS)+1):(floor(250*n/FS)+1)));
-    p2 = sum(p((floor(250*n/FS)+1):(floor(2e3*n/FS)+1)));
-    p3 = sum(p((floor(2e3*n/FS)+1):(floor(8e3*n/FS)+1)));
-    p4 = sum(p((floor(8e3*n/FS)+1):(floor(20e3*n/FS)+1)));
+    p0 = sum ( p( ( floor ( 35 * n / FS ) + 1 ):( floor ( 60 * n / FS ) + 1 ) ) );
+    p1 = sum ( p( ( floor ( 60 * n / FS ) + 1 ):( floor ( 250 * n / FS ) + 1 ) ) );
+    p2 = sum ( p( ( floor ( 250 * n / FS ) + 1 ):( floor ( 2e3 * n / FS ) + 1 ) ) );
+    p3 = sum ( p( ( floor ( 2e3 * n / FS ) + 1 ):( floor ( 8e3 * n / FS ) + 1 ) ) );
+    p4 = sum ( p( ( floor ( 8e3 * n / FS ) + 1 ):( floor ( 20e3 * n / FS ) + 1 ) ) );
 
     pArr = [ p0, p1, p2 , p3, p4 ];
     % freqArray = (0:nUniquePts-1) * (FS / n); % create the frequency array
@@ -58,8 +58,8 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
 
 
     % viewing range
-    high = 7.5e3;
-    low = -7.5e3;
+    high = 3.5e3;
+    low = -3.5e3;
 
     % removing undefined regions
     for a = 1:5
@@ -127,5 +127,5 @@ function currentfft ( player, Y, FS, thetaArr, xP1, yP1, xP2, yP2, xP3, yP3, xP4
     plot( xP4, yP4, 'c' )
     plot( xP5, yP5, 'c' )
     hold off;
-    legend('0 Hz - 60 Hz', '60 Hz - 250 Hz', '250 - 2 kHz', '2 kHz - 8 kHz', '8 kHz -20 kHz' )
+    legend('35 Hz - 60 Hz', '60 Hz - 250 Hz', '250 - 2 kHz', '2 kHz - 8 kHz', '8 kHz -20 kHz' )
     axis([ low high low high ]);

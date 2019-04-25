@@ -12,7 +12,7 @@ player.play;
 thetaArr = [ pi/2, 10.5*pi/5, 8.5*pi/5, 6.5*pi/5, 4.5*pi/5 ]; % array of thetas for pentagon
 
 % x and y for static pentagon
-q = ( 4 / 3 ) * 10^-4;
+q = 2.8571e-4;
 
 xP = [ cos(thetaArr(1)) / q, cos(thetaArr(2)) / q, cos(thetaArr(3)) / q, cos(thetaArr(4)) / q, cos(thetaArr(5)) / q ];
 yP = [ sin(thetaArr(1)) / q, sin(thetaArr(2)) / q, sin(thetaArr(3)) / q, sin(thetaArr(4)) / q, sin(thetaArr(5)) / q ];
